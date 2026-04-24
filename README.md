@@ -68,11 +68,27 @@ lector-placas-parqueadero/
 
 ## Como Probar la Aplicacion
 
-### Requisitos
+### Opcion A: Instalar el APK directamente (recomendada)
 
-- Un celular Android con [Expo Go](https://play.google.com/store/apps/details?id=host.exp.exponent) instalado
-- Node.js 18+ en el computador ([descargar](https://nodejs.org))
-- Conexion a internet
+La forma mas rapida de probar. Solo se necesita un celular Android.
+
+1. Abrir este link en el celular Android:
+   **https://expo.dev/accounts/leydymacareo/projects/detector-placas/builds/d6da7e21-ea7a-44ca-bf8c-bcb2896b3c54**
+2. Descargar e instalar el APK (puede pedir "permitir instalar de fuentes desconocidas")
+3. Abrir la app
+4. En **"IP del servidor"** escribir: `3.148.246.40`
+5. En **"Puerto"** dejar: `8080`
+6. Apuntar la camara a un vehiculo con placa colombiana y tocar **"Detectar Placa"**
+
+### Opcion B: Probar solo el backend (sin instalar nada)
+
+Abrir en el navegador:
+- Health check: **http://3.148.246.40:8080/**
+- Documentacion interactiva (Swagger): **http://3.148.246.40:8080/docs** — permite subir una imagen y ver el resultado directamente desde el navegador
+
+### Opcion C: Ejecutar desde el codigo fuente
+
+Requiere Node.js 18+ y Expo Go en el celular Android.
 
 ### Paso 1: Verificar que el backend esta corriendo
 

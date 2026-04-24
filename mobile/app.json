@@ -51,6 +51,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "20b4f6a5-d2af-4d47-854d-5850718a4c51"
+      }
+    },
+    "owner": "leydymacareo"
   }
 }
