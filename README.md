@@ -292,7 +292,6 @@ Detecta y lee placas vehiculares en una imagen.
 ## Notas Importantes
 
 - El archivo `best.pt` (modelo entrenado) **no se incluye en el repositorio** por su peso. Se debe generar ejecutando el cuaderno de entrenamiento o solicitarlo a la estudiante.
-- La instancia de AWS EC2 tiene costo por hora. **Se recomienda apagarla** desde la consola de AWS cuando no se este usando (EC2 > Instances > Stop Instance).
 - La app movil fue probada en Android con Expo Go SDK 54.
 
 ## Referencias
@@ -306,4 +305,4 @@ Detecta y lee placas vehiculares en una imagen.
 
 ## Licencia
 
-Proyecto academico - UNAB Digital 2026
+Proyecto academico - UNAB 2026
