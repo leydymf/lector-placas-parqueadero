@@ -3,7 +3,7 @@
 Sistema de reconocimiento automatico de placas vehiculares colombianas (ALPR) para control de ingreso en parqueaderos.
 
 **Estudiante:** Leydy Yohana Macareo Fuentes
-**Curso:** Inteligencia Artificial Avanzada - UNAB Digital
+**Curso:** Ciencia de Datos - UNAB 
 **Fecha:** Abril 2026
 
 ---
