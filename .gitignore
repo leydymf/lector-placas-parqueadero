@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+
+# Modelo (muy pesado para GitHub)
+*.pt
+*.onnx
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Node / Expo (app movil)
+node_modules/
+.expo/
+*.apk
+*.aab
+*.ipa
+
+# IDE
+.vscode/
+.idea/
+
+# Variables de entorno
+.env
+
+# Logs
+*.log
