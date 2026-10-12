@@ -1,10 +1,19 @@
 # Lector de Placas Vehiculares Colombianas - ALPR
 
-Sistema de reconocimiento automatico de placas vehiculares colombianas (ALPR) para control de ingreso en parqueaderos.
+Sistema de reconocimiento automatico de placas vehiculares colombianas (ALPR) para control de ingreso en parqueaderos: una app movil toma la foto, un backend en la nube detecta la placa con YOLOv8 y la lee con OCR.
 
-**Estudiante:** Leydy Yohana Macareo Fuentes
-**Curso:** Ciencia de Datos - UNAB 
-**Fecha:** Abril 2026
+> **English summary:** End-to-end license plate recognition for Colombian vehicles. A React Native (Expo) app sends a photo to a FastAPI backend deployed on AWS EC2, where a fine-tuned YOLOv8n model detects the plate and EasyOCR reads it (ABC-123 format). The app shows the annotated image and the plate text, and reads it aloud.
+
+<p align="center">
+  <img src="docs/demo_inicio.jpg" alt="Pantalla de inicio de la app" width="260">
+  &nbsp;&nbsp;
+  <img src="docs/demo_resultado.jpg" alt="Placa detectada y leida por la app" width="260">
+</p>
+
+**Autora:** Leydy Yohana Macareo Fuentes (proyecto individual: entrenamiento del modelo, API, despliegue en AWS y app movil)
+**Curso:** Ciencia de Datos - UNAB, abril 2026
+
+**Tecnologias:** Python · YOLOv8 (Ultralytics) · EasyOCR · FastAPI · AWS EC2 · React Native + Expo · TypeScript · Google Colab
 
 ---
 
@@ -15,7 +24,6 @@ Aplicacion movil que detecta y lee placas de vehiculos colombianos usando inteli
 1. **Deteccion**: Un modelo YOLOv8n localiza la placa en la imagen
 2. **Lectura (OCR)**: EasyOCR extrae los caracteres de la placa (formato ABC-123)
 
-Adicionalmente, el sistema identifica la ciudad o departamento colombiano segun el prefijo de la placa.
 
 ## Arquitectura del Sistema
 
@@ -61,104 +69,50 @@ lector-placas-parqueadero/
 | Backend API | FastAPI + Uvicorn | Python 3.12 |
 | Servidor en la nube | AWS EC2 (Ubuntu 24.04) | c7i.large.flex |
 | App movil | React Native + Expo | SDK 54 |
-| Entrenamiento | Google Colab | GPU T4 |
+| Entrenamiento | Google Colab o local | GPU T4 o Apple Silicon (MPS) |
 | Dataset | Roboflow - placas colombianas | 674 imagenes |
 
 ---
 
-## Como Probar la Aplicacion
+## Como Ejecutarlo
 
-### Opcion A: Instalar el APK directamente (recomendada)
+> El servidor de demostracion en AWS ya no esta encendido. Para probarlo, se corre el backend en tu computador y la app se conecta a el por la red local.
 
-La forma mas rapida de probar. Solo se necesita un celular Android.
+Requisitos: Python 3.12, Node.js 18+ y la app Expo Go en un celular Android. El modelo `best.pt` se obtiene con el cuaderno de entrenamiento (ver mas abajo).
 
-1. Abrir este link en el celular Android:
-   **https://expo.dev/accounts/leydymacareo/projects/detector-placas/builds/d6da7e21-ea7a-44ca-bf8c-bcb2896b3c54**
-2. Descargar e instalar el APK (puede pedir "permitir instalar de fuentes desconocidas")
-3. Abrir la app
-4. En **"IP del servidor"** escribir: `3.148.246.40`
-5. En **"Puerto"** dejar: `8080`
-6. Apuntar la camara a un vehiculo con placa colombiana y tocar **"Detectar Placa"**
-
-### Opcion B: Probar solo el backend (sin instalar nada)
-
-Abrir en el navegador:
-- Health check: **http://3.148.246.40:8080/**
-- Documentacion interactiva (Swagger): **http://3.148.246.40:8080/docs** — permite subir una imagen y ver el resultado directamente desde el navegador
-
-### Opcion C: Ejecutar desde el codigo fuente
-
-Requiere Node.js 18+ y Expo Go en el celular Android.
-
-### Paso 1: Verificar que el backend esta corriendo
-
-Abrir en el navegador:
-
-```
-http://3.148.246.40:8080/
-```
-
-Debe mostrar:
-
-```json
-{
-  "status": "ok",
-  "modelo": "best.pt",
-  "descripcion": "ALPR Placas Colombianas - YOLOv8 + EasyOCR"
-}
-```
-
-Tambien puede probar la API interactiva (Swagger) en:
-
-```
-http://3.148.246.40:8080/docs
-```
-
-### Paso 2: Probar el backend con una imagen (opcional)
-
-Desde la terminal, enviar una imagen de un vehiculo con placa visible:
+### 1. Backend
 
 ```bash
-curl -X POST -F "file=@foto_carro.jpg" http://3.148.246.40:8080/predict/
+git clone https://github.com/leydymf/lector-placas-parqueadero.git
+cd lector-placas-parqueadero/backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+# copiar aqui el modelo entrenado best.pt
+python app.py
 ```
 
-Respuesta esperada:
+La API queda en `http://localhost:8080` y su documentacion interactiva (Swagger) en `http://localhost:8080/docs`, donde se puede subir una imagen y ver el resultado.
 
-```json
-{
-  "placas": ["ABC-123"],
-  "cantidad": 1,
-  "image": "<imagen procesada en base64>"
-}
-```
-
-### Paso 3: Ejecutar la app movil
+Prueba rapida desde la terminal:
 
 ```bash
-git clone https://github.com/leydyyohanamacareofuentes/lector-placas-parqueadero.git
-cd lector-placas-parqueadero/mobile
+curl -X POST -F "file=@foto_carro.jpg" http://localhost:8080/predict/
+```
+
+### 2. App movil
+
+```bash
+cd ../mobile
 npm install
 npx expo start -c
 ```
 
-Aparecera un codigo QR en la terminal.
+1. Escanear el codigo QR con **Expo Go** (celular y computador en la misma red WiFi).
+2. En **"IP del servidor"** escribir la IP local del computador y dejar el puerto `8080`.
+3. Apuntar la camara a un vehiculo y tocar **"Detectar Placa"**.
 
-### Paso 4: Abrir en el celular
-
-1. Abrir **Expo Go** en el celular Android
-2. Escanear el **codigo QR** que aparece en la terminal
-3. El celular y el computador deben estar en la **misma red WiFi**
-
-### Paso 5: Usar la app
-
-1. En el campo **"IP del servidor"** escribir: `3.148.246.40`
-2. En el campo **"Puerto"** dejar: `8080`
-3. Apuntar la camara a un vehiculo con placa colombiana visible
-4. Tocar el boton **"Detectar Placa"**
-5. La app mostrara:
-   - La imagen original con la placa marcada (bounding box verde)
-   - El texto de la placa detectada (ej: JNU-540)
-   - Leera la placa en voz alta
+La app muestra la imagen con la placa marcada, el texto de la placa (por ejemplo JNU-540) y la lee en voz alta.
 
 ---
 
@@ -189,15 +143,39 @@ El modelo fue entrenado en Google Colab usando el cuaderno `notebooks/cuaderno_e
 | Epocas | 50 | Pasadas completas sobre el dataset |
 | Tamano imagen | 640x640 | Resolucion de entrada |
 | Batch size | 16 | Imagenes por lote |
-| Early stopping | 10 epocas | Para si no mejora |
-| GPU | T4 (Colab) | Aceleracion de entrenamiento |
+| Early stopping | 25 epocas | Para si no mejora (el mAP oscila en las primeras epocas) |
+| GPU | T4 en Colab o Apple M1 Max (MPS) | La version publicada se entreno en el Mac (unos 70 minutos) |
+
+### Resultados
+
+Evaluacion del detector en el conjunto de validacion (110 imagenes, 109 placas):
+
+- **mAP50:** 0.994
+- **mAP50-95:** 0.844
+- **Precision:** 1.00
+- **Recall:** 0.97
+
+El detector es la parte fuerte: en las imagenes de prueba encuentra las placas con una confianza promedio de 91%. La lectura con OCR es el punto debil. Para mejorarla, el backend:
+
+- lee solo los caracteres grandes de la placa y descarta el nombre de la ciudad impreso abajo,
+- prueba tres versiones del recorte (procesada, en gris ampliada y binarizada) y se queda con la primera lectura valida,
+- corrige confusiones tipicas segun la posicion (O/0, B/8, S/5...) usando el formato colombiano ABC-123 o ABC-12D para motos.
+
+Con esto, la lectura valida sobre 91 placas del dataset paso de 23% a 41%. Muchas de esas fotos son pequenas o borrosas; con fotos tomadas desde la app el resultado es mejor. El siguiente paso seria un modelo OCR entrenado especificamente para placas.
+
+![Metricas de entrenamiento](docs/metricas_entrenamiento.png)
+
+![Detecciones en validacion](docs/detecciones_validacion.jpg)
+
 
 ### Como Reproducir el Entrenamiento
 
-1. Abrir `notebooks/cuaderno_entrenamiento_placas.ipynb` en [Google Colab](https://colab.research.google.com)
-2. Activar GPU: **Runtime > Change runtime type > T4 GPU**
-3. Ejecutar todas las celdas en orden (Shift+Enter)
-4. Al finalizar, el modelo `best.pt` se descarga automaticamente y se guarda en Google Drive
+El cuaderno funciona en Google Colab o en un computador local: detecta el entorno y usa la GPU disponible.
+
+1. Crear una API key gratuita en [Roboflow](https://roboflow.com) y guardarla en la variable de entorno `ROBOFLOW_API_KEY` (en Colab, como secreto).
+2. En Colab, activar GPU: **Runtime > Change runtime type > T4 GPU**.
+3. Ejecutar todas las celdas en orden.
+4. El modelo queda en `runs/proyecto_placas/detector_placas/weights/best.pt` (local) o se descarga y copia a Google Drive (Colab).
 
 ---
 
@@ -307,7 +285,7 @@ Detecta y lee placas vehiculares en una imagen.
 
 ## Notas Importantes
 
-- El archivo `best.pt` (modelo entrenado) **no se incluye en el repositorio** por su peso. Se debe generar ejecutando el cuaderno de entrenamiento o solicitarlo a la estudiante.
+- El archivo `best.pt` (modelo entrenado, 6 MB) no se incluye en el repositorio. Se genera ejecutando el cuaderno de entrenamiento.
 - La app movil fue probada en Android con Expo Go SDK 54.
 
 ## Referencias

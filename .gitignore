@@ -33,3 +33,6 @@ node_modules/
 
 # Logs
 *.log
+
+# Salidas del entrenamiento local
+runs/
